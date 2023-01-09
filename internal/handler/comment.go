@@ -26,7 +26,7 @@ import (
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/comments [post]
 func (h *Handler) createComment(c *gin.Context) {
-	id, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -35,14 +35,9 @@ func (h *Handler) createComment(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	_, err = h.services.Post.GetById(input.PostId)
+	commentId, err := h.services.Comment.Create(userId, input)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	commentId, err := h.services.Comment.Create(id, input)
-	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	comment, err := h.services.Comment.GetById(commentId)
@@ -79,18 +74,9 @@ func (h *Handler) updateComment(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Param("id"))
+	commentId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
-		return
-	}
-	comment, err := h.services.Comment.GetById(id)
-	if err != nil {
-		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	if userId != comment.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't update not your comment")
 		return
 	}
 	var input entity.CommentUpdate
@@ -98,11 +84,11 @@ func (h *Handler) updateComment(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err = h.services.Comment.Update(id, input); err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+	if err = h.services.Comment.Update(userId, commentId, input); err != nil {
+		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	comment, err = h.services.Comment.GetById(id)
+	comment, err := h.services.Comment.GetById(commentId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -131,7 +117,7 @@ func (h *Handler) updateComment(c *gin.Context) {
 //	@Failure		500	{object}	errorResponse
 //	@Router			/api/comments/:id [delete]
 func (h *Handler) deleteComment(c *gin.Context) {
-	id, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -140,16 +126,7 @@ func (h *Handler) deleteComment(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	comment, err := h.services.Comment.GetById(commentId)
-	if err != nil {
-		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	if id != comment.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't delete comment another user")
-		return
-	}
-	err = h.services.Comment.Delete(commentId)
+	err = h.services.Comment.Delete(userId, commentId)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

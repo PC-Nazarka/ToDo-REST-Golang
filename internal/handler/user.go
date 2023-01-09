@@ -28,12 +28,12 @@ func (h *Handler) createUser(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	id, err := h.services.User.Create(input)
+	userId, err := h.services.User.Create(input)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	user, err := h.services.User.GetById(id)
+	user, err := h.services.User.GetById(userId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -61,12 +61,12 @@ func (h *Handler) createUser(c *gin.Context) {
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/users/:id [get]
 func (h *Handler) getUserById(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	user, err := h.services.User.GetById(id)
+	user, err := h.services.User.GetById(userId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -131,12 +131,12 @@ func (h *Handler) updateUser(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	if userId != id {
+	if userId != userPathId {
 		NewErrorResponse(c, http.StatusForbidden, "you can't update another user")
 		return
 	}
@@ -149,7 +149,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	user, err := h.services.User.GetById(id)
+	user, err := h.services.User.GetById(userPathId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -182,12 +182,12 @@ func (h *Handler) deleteUser(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	if userId != id {
+	if userId != userPathId {
 		NewErrorResponse(c, http.StatusForbidden, "you can't delete another user")
 		return
 	}
@@ -219,17 +219,17 @@ func (h *Handler) deleteUser(c *gin.Context) {
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/users/:id/tasks [get]
 func (h *Handler) getTasksByUserId(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	_, err = h.services.User.GetById(id)
+	_, err = h.services.User.GetById(userPathId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	tasks, err := h.services.Task.GetByUserId(id)
+	tasks, err := h.services.Task.GetByUserId(userPathId)
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -261,17 +261,17 @@ func (h *Handler) getTasksByUserId(c *gin.Context) {
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/users/:id/posts [get]
 func (h *Handler) getPostsByUserId(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	_, err = h.services.User.GetById(id)
+	_, err = h.services.User.GetById(userPathId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	posts, err := h.services.Post.GetByUserId(id)
+	posts, err := h.services.Post.GetByUserId(userPathId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return

@@ -27,7 +27,7 @@ import (
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/tasks [post]
 func (h *Handler) createTask(c *gin.Context) {
-	id, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -36,9 +36,9 @@ func (h *Handler) createTask(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	taskId, err := h.services.Task.Create(id, input)
+	taskId, err := h.services.Task.Create(userId, input)
 	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		NewErrorResponse(c, -1, err.Error())
 		return
 	}
 	task, err := h.services.Task.GetById(taskId)
@@ -69,12 +69,12 @@ func (h *Handler) createTask(c *gin.Context) {
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/tasks/:id [get]
 func (h *Handler) getTaskById(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	taskId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	task, err := h.services.Task.GetById(id)
+	task, err := h.services.Task.GetById(taskId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -108,18 +108,9 @@ func (h *Handler) updateTask(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Param("id"))
+	taskId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
-		return
-	}
-	task, err := h.services.Task.GetById(id)
-	if err != nil {
-		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	if userId != task.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't update not your task")
 		return
 	}
 	var input entity.TaskUpdate
@@ -127,11 +118,11 @@ func (h *Handler) updateTask(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	if err = h.services.Task.Update(id, input); err != nil {
+	if err = h.services.Task.Update(userId, taskId, input); err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	task, err = h.services.Task.GetById(id)
+	task, err := h.services.Task.GetById(taskId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -164,22 +155,13 @@ func (h *Handler) deleteTask(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Param("id"))
+	taskId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	task, err := h.services.Task.GetById(id)
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-	if userId != task.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't delete not your task")
-		return
-	}
-	if err = h.services.Task.Delete(id); err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+	if err = h.services.Task.Delete(userId, taskId); err != nil {
+		NewErrorResponse(c, -1, err.Error())
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)

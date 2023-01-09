@@ -8,8 +8,9 @@ import (
 )
 
 var words = map[string]int{
-	"not found":     404,
-	"has no values": 400,
+	"not found":     http.StatusNotFound,
+	"has no values": http.StatusBadRequest,
+	"another user":  http.StatusForbidden,
 }
 
 type errorResponse struct {

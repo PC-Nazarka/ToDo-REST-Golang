@@ -28,7 +28,7 @@ import (
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/posts [post]
 func (h *Handler) createPost(c *gin.Context) {
-	id, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -37,18 +37,9 @@ func (h *Handler) createPost(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	task, err := h.services.Task.GetById(input.TaskId)
+	postId, err := h.services.Post.Create(userId, input)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	if id != task.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't create post with task of another user")
-		return
-	}
-	postId, err := h.services.Post.Create(id, input)
-	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	post, err := h.services.Post.GetById(postId)
@@ -80,6 +71,9 @@ func (h *Handler) getAllPosts(c *gin.Context) {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
+	if posts == nil {
+		posts = make([]entity.Post, 0)
+	}
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -105,7 +99,7 @@ func (h *Handler) getAllPosts(c *gin.Context) {
 //	@Failure		500		{object}	errorResponse
 //	@Router			/api/posts/:id [patch]
 func (h *Handler) updatePost(c *gin.Context) {
-	id, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -114,26 +108,17 @@ func (h *Handler) updatePost(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	post, err := h.services.Post.GetById(postId)
-	if err != nil {
-		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	if id != post.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't create post with task of another user")
-		return
-	}
 	var input entity.PostUpdate
 	if err = c.BindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	err = h.services.Post.Update(postId, input)
+	err = h.services.Post.Update(userId, postId, input)
 	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	post, err = h.services.Post.GetById(postId)
+	post, err := h.services.Post.GetById(postId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -162,7 +147,7 @@ func (h *Handler) updatePost(c *gin.Context) {
 //	@Failure		500	{object}	errorResponse
 //	@Router			/api/posts/:id [delete]
 func (h *Handler) deletePost(c *gin.Context) {
-	id, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -171,18 +156,9 @@ func (h *Handler) deletePost(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
 	}
-	post, err := h.services.Post.GetById(postId)
+	err = h.services.Post.Delete(userId, postId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
-		return
-	}
-	if id != post.UserId {
-		NewErrorResponse(c, http.StatusForbidden, "you can't create post with task of another user")
-		return
-	}
-	err = h.services.Post.Delete(postId)
-	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
@@ -208,11 +184,6 @@ func (h *Handler) getCommentsByPostId(c *gin.Context) {
 	postId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
-		return
-	}
-	_, err = h.services.Post.GetById(postId)
-	if err != nil {
-		NewErrorResponse(c, -1, err.Error())
 		return
 	}
 	comments, err := h.services.Comment.GetByPostId(postId)

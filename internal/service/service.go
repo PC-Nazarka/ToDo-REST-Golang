@@ -21,8 +21,8 @@ type User interface {
 type Task interface {
 	Create(userId int, task entity.TaskCreate) (int, error)
 	GetById(id int) (entity.Task, error)
-	Update(id int, task entity.TaskUpdate) error
-	Delete(id int) error
+	Update(userId, taskId int, task entity.TaskUpdate) error
+	Delete(userId, taskId int) error
 	GetByUserId(id int) ([]entity.Task, error)
 }
 
@@ -30,8 +30,8 @@ type Post interface {
 	Create(userId int, task entity.PostCreate) (int, error)
 	GetById(id int) (entity.Post, error)
 	GetAll() ([]entity.Post, error)
-	Update(id int, post entity.PostUpdate) error
-	Delete(id int) error
+	Update(userId, postId int, post entity.PostUpdate) error
+	Delete(userId, postId int) error
 	GetByUserId(id int) ([]entity.Post, error)
 }
 
@@ -39,8 +39,8 @@ type Comment interface {
 	Create(userId int, comment entity.CommentCreate) (int, error)
 	GetById(id int) (entity.Comment, error)
 	GetByPostId(id int) ([]entity.Comment, error)
-	Update(id int, comment entity.CommentUpdate) error
-	Delete(id int) error
+	Update(userId, commentId int, comment entity.CommentUpdate) error
+	Delete(userId, commentId int) error
 }
 
 type Service struct {
@@ -56,7 +56,7 @@ func NewService(repos *repository.Repository) *Service {
 		JWTAuthorization: NewJWTAuthorizationService(repos.User),
 		User:             NewUserService(repos.User),
 		Task:             NewTaskService(repos.Task),
-		Post:             NewPostService(repos.Post),
-		Comment:          NewCommentService(repos.Comment),
+		Post:             NewPostService(repos.Post, repos.Task),
+		Comment:          NewCommentService(repos.Comment, repos.Post),
 	}
 }

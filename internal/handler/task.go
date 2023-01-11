@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"todo-list/internal/entity"
@@ -181,7 +183,7 @@ func (h *Handler) deleteTask(c *gin.Context) {
 //
 //	@Produce		json
 //	@Param			file formData file true "CSV file with tasks"
-//	@Success		204
+//	@Success		201
 //	@Failure		400	{object}	errorResponse
 //	@Failure		401	{object}	errorResponse
 //	@Failure		403	{object}	errorResponse
@@ -199,8 +201,8 @@ func (h *Handler) importTasks(c *gin.Context) {
 		return
 	}
 	filename := strings.Join(strings.Split(file.Filename, " "), "_")
-	pathSave := "assets/" + filename
-	err = c.SaveUploadedFile(file, pathSave)
+	path := "assets/upload/" + filename
+	err = c.SaveUploadedFile(file, path)
 	if err != nil {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -209,7 +211,7 @@ func (h *Handler) importTasks(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, "assets file has invalid type")
 		return
 	}
-	tasks, err := h.services.Task.ParseFile(pathSave)
+	tasks, err := h.services.Task.ParseFile(path)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
@@ -224,64 +226,48 @@ func (h *Handler) importTasks(c *gin.Context) {
 		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, createdTasks)
+	os.Remove(path)
+	c.JSON(http.StatusCreated, createdTasks)
 }
 
-// Import Task
+// Export Task
 //
-//	@Summary		Import Task
+//	@Summary		Export Task
 //	@Tags			tasks
-//	@Description	Import Task
-//	@ID				import-task
+//	@Description	Export Task
+//	@ID				Export-task
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept multipart/form-data
-//
-//	@Produce		json
-//	@Param			file formData file true "CSV file with tasks"
-//	@Success		204
+//	@Produce		csv
+//	@Success		200
 //	@Failure		400	{object}	errorResponse
 //	@Failure		401	{object}	errorResponse
 //	@Failure		403	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/api/tasks/import [post]
-func (h *Handler) importTasks(c *gin.Context) {
+//	@Router			/api/tasks/export [get]
+func (h *Handler) exportTasks(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	file, err := c.FormFile("file")
+	tasks, err := h.services.Task.GetByUserId(userId)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	filename := strings.Join(strings.Split(file.Filename, " "), "_")
-	pathSave := "assets/" + filename
-	err = c.SaveUploadedFile(file, pathSave)
-	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if !strings.Contains(filename, ".csv") {
-		NewErrorResponse(c, http.StatusBadRequest, "assets file has invalid type")
-		return
-	}
-	tasks, err := h.services.Task.ParseFile(pathSave)
+	filename := fmt.Sprintf("tasks_%d.csv", userId)
+	path := "assets/download/" + filename
+	err = h.services.Task.WriteFile(tasks, path)
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	ids, err := h.services.Task.CreateBulk(userId, tasks)
-	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	createdTasks, err := h.services.Task.GetByIds(ids)
-	if err != nil {
-		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, createdTasks)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Disposition", "attachment; filename="+filename)
+	c.Header("Content-Type", "application/CSV")
+	c.File(path)
+	os.Remove(path)
 }

@@ -1,3 +1,4 @@
 .idea
 .env
-assets/*
+assets/upload/*
+assets/download/*

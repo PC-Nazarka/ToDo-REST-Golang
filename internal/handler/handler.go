@@ -56,7 +56,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			todo.PATCH("/:id", h.updateTask)
 			todo.DELETE("/:id", h.deleteTask)
 			todo.POST("/import", h.importTasks)
-			//todo.GET("/export", h.exportTasks)
+			todo.GET("/export", h.exportTasks)
 		}
 		posts := api.Group("/posts")
 		{

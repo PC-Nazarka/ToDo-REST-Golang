@@ -108,3 +108,32 @@ func (t *TaskService) ParseFile(path string) ([]entity.TaskCreate, error) {
 	}
 	return tasks, nil
 }
+
+func (t *TaskService) WriteFile(tasks []entity.Task, path string) error {
+	headers := []string{
+		"Name",
+		"Description",
+		"IsDone",
+	}
+	records := make([][]string, 0)
+	for _, task := range tasks {
+		temp := make([]string, 0)
+		temp = append(temp, task.Name)
+		temp = append(temp, task.Description)
+		temp = append(temp, strconv.FormatBool(task.IsDone))
+		records = append(records, temp)
+	}
+	file, err := os.Create(path)
+	defer file.Close()
+	if err != nil {
+		return err
+	}
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+	writer.Comma = ';'
+	if err := writer.Write(headers); err != nil {
+		return err
+	}
+	err = writer.WriteAll(records)
+	return err
+}

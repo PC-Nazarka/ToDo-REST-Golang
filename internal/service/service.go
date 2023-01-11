@@ -27,6 +27,7 @@ type Task interface {
 	Delete(userId, taskId int) error
 	GetByUserId(id int) ([]entity.Task, error)
 	ParseFile(path string) ([]entity.TaskCreate, error)
+	WriteFile(tasks []entity.Task, path string) error
 }
 
 type Post interface {

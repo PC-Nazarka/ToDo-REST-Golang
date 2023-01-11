@@ -42,6 +42,11 @@ func (t *TaskRepository) GetById(id int) (entity.Task, error) {
 	return task, nil
 }
 
+func (t *TaskRepository) GetByIds(ids []int) ([]entity.Task, error) {
+	var tasks = make([]entity.Task, 1)
+	return tasks, nil
+}
+
 func (t *TaskRepository) Update(id int, task entity.TaskUpdate) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)

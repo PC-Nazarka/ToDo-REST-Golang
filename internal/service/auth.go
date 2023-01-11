@@ -3,13 +3,18 @@ package service
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"os"
+	"strconv"
 	"time"
 	"todo-list/internal/repository"
 )
 
-const (
-	tokenTTL   = 12 * time.Hour
-	signingKey = "SomeKey"
+var (
+	accessTokenExpires, _  = strconv.Atoi(os.Getenv("ACCESS_EXPIRES"))
+	refreshTokenExpires, _ = strconv.Atoi(os.Getenv("REFRESH_EXPIRES"))
+	signingKey             = os.Getenv("SECRET_KEY")
+	accessTokenTTL         = time.Minute * time.Duration(accessTokenExpires)
+	refreshTokenTTL        = time.Minute * time.Duration(refreshTokenExpires)
 )
 
 type TokenClaims struct {
@@ -25,18 +30,24 @@ func NewJWTAuthorizationService(userRepo repository.User) *JWTAuthorizationServi
 	return &JWTAuthorizationService{userRepo: userRepo}
 }
 
-func (s *JWTAuthorizationService) GenerateToken(id int) (string, error) {
+func (s *JWTAuthorizationService) GenerateAccessRefreshTokens(id int) (string, string, error) {
 	user, err := s.userRepo.GetById(id)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &TokenClaims{
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &TokenClaims{
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
-			IssuedAt:  time.Now().Unix(),
+			ExpiresAt: time.Now().Add(accessTokenTTL).Unix(),
 		},
 		user.Id})
-	return token.SignedString([]byte(signingKey))
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &TokenClaims{
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(refreshTokenTTL).Unix(),
+		},
+		user.Id})
+	accessTokenString, err := accessToken.SignedString([]byte(signingKey))
+	refreshTokenString, err := refreshToken.SignedString([]byte(signingKey))
+	return accessTokenString, refreshTokenString, err
 }
 
 func (s *JWTAuthorizationService) ParseToken(accessToken string) (int, error) {
@@ -46,7 +57,7 @@ func (s *JWTAuthorizationService) ParseToken(accessToken string) (int, error) {
 		}
 		return []byte(signingKey), nil
 	})
-	if err != nil {
+	if !token.Valid {
 		return 0, err
 	}
 	claims, ok := token.Claims.(*TokenClaims)

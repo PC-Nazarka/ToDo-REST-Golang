@@ -6,7 +6,7 @@ import (
 )
 
 type JWTAuthorization interface {
-	GenerateToken(id int) (string, error)
+	GenerateAccessRefreshTokens(id int) (string, string, error)
 	ParseToken(accessToken string) (int, error)
 }
 
@@ -20,10 +20,13 @@ type User interface {
 
 type Task interface {
 	Create(userId int, task entity.TaskCreate) (int, error)
+	CreateBulk(userId int, tasks []entity.TaskCreate) ([]int, error)
 	GetById(id int) (entity.Task, error)
+	GetByIds(ids []int) ([]entity.Task, error)
 	Update(userId, taskId int, task entity.TaskUpdate) error
 	Delete(userId, taskId int) error
 	GetByUserId(id int) ([]entity.Task, error)
+	ParseFile(path string) ([]entity.TaskCreate, error)
 }
 
 type Post interface {

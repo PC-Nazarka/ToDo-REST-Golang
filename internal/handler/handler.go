@@ -30,10 +30,15 @@ func NewHandler(services *service.Service) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+	router.Static("/assets", "./assets")
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	api := router.Group("/api")
 	{
-		api.POST("/token", h.createToken)
+		token := api.Group("/token")
+		{
+			token.POST("/create", h.createToken)
+			token.POST("/refresh", h.refreshTokens)
+		}
 		users := api.Group("/users")
 		{
 			users.POST("", h.createUser)
@@ -50,6 +55,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			todo.GET("/:id", h.getTaskById)
 			todo.PATCH("/:id", h.updateTask)
 			todo.DELETE("/:id", h.deleteTask)
+			todo.POST("/import", h.importTasks)
+			//todo.GET("/export", h.exportTasks)
 		}
 		posts := api.Group("/posts")
 		{

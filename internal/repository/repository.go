@@ -24,6 +24,7 @@ type User interface {
 type Task interface {
 	Create(userId int, task entity.TaskCreate) (int, error)
 	GetById(id int) (entity.Task, error)
+	GetByIds(ids []int) ([]entity.Task, error)
 	Update(id int, task entity.TaskUpdate) error
 	Delete(id int) error
 	GetByUserId(id int) ([]entity.Task, error)

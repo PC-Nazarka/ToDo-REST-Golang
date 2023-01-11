@@ -23,5 +23,5 @@ docker-compose up
 ```
 
 ```bash
-compose-up
+make compose-up
 ```

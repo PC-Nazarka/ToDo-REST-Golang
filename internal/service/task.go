@@ -1,7 +1,10 @@
 package service
 
 import (
+	"encoding/csv"
 	"errors"
+	"os"
+	"strconv"
 	"todo-list/internal/entity"
 	"todo-list/internal/repository"
 )
@@ -18,8 +21,32 @@ func (t *TaskService) Create(userId int, task entity.TaskCreate) (int, error) {
 	return t.repo.Create(userId, task)
 }
 
+func (t *TaskService) CreateBulk(userId int, tasks []entity.TaskCreate) ([]int, error) {
+	createdTasksIds := make([]int, 0)
+	for _, task := range tasks {
+		id, err := t.repo.Create(userId, task)
+		if err != nil {
+			return make([]int, 0), err
+		}
+		createdTasksIds = append(createdTasksIds, id)
+	}
+	return createdTasksIds, nil
+}
+
 func (t *TaskService) GetById(id int) (entity.Task, error) {
 	return t.repo.GetById(id)
+}
+
+func (t *TaskService) GetByIds(ids []int) ([]entity.Task, error) {
+	createdTasks := make([]entity.Task, 0)
+	for _, id := range ids {
+		task, err := t.repo.GetById(id)
+		if err != nil {
+			return make([]entity.Task, 0), err
+		}
+		createdTasks = append(createdTasks, task)
+	}
+	return createdTasks, nil
 }
 
 func (t *TaskService) Update(userId, taskId int, task entity.TaskUpdate) error {
@@ -49,4 +76,35 @@ func (t *TaskService) Delete(userId, taskId int) error {
 
 func (t *TaskService) GetByUserId(id int) ([]entity.Task, error) {
 	return t.repo.GetByUserId(id)
+}
+
+func (t *TaskService) ParseFile(path string) ([]entity.TaskCreate, error) {
+	var tasks = make([]entity.TaskCreate, 0)
+	file, err := os.Open(path)
+	if err != nil {
+		return tasks, nil
+	}
+	defer file.Close()
+	reader := csv.NewReader(file)
+	reader.Comma = ';'
+	if _, err := reader.Read(); err != nil {
+		return tasks, nil
+	}
+	records, err := reader.ReadAll()
+	if err != nil {
+		return tasks, nil
+	}
+	for _, task := range records {
+		isDone, err := strconv.ParseBool(task[2])
+		if err != nil {
+			return tasks, err
+		}
+		tempTask := entity.TaskCreate{
+			Name:        task[0],
+			Description: task[1],
+			IsDone:      isDone,
+		}
+		tasks = append(tasks, tempTask)
+	}
+	return tasks, nil
 }

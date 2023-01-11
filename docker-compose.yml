@@ -13,14 +13,20 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+    volumes:
+      - ./assets/:/go/assets/
     environment:
       - PORT=${GOLANG_PORT}
+      - ACCESS_EXPIRES=${GOLANG_ACCESS_EXPIRES}
+      - REFRESH_EXPIRES=${GOLANG_REFRESH_EXPIRES}
+      - SECRET_KEY=${GOLANG_SECRET_KEY}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_DB=${POSTGRES_DB}
       - DB_HOST=${POSTGRES_HOST}
       - DB_PORT=${POSTGRES_PORT}
       - DB_SSLMODE=${POSTGRES_SSLMODE}
+      - REDIS_URL=${REDIS_URL}
     command: go run cmd/app/main.go
 
   postgres:

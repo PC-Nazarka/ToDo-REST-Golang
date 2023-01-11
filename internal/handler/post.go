@@ -16,7 +16,7 @@ import (
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	body		entity.PostCreate	true	"post body"
@@ -57,7 +57,7 @@ func (h *Handler) createPost(c *gin.Context) {
 //	@Description	Get All Posts
 //	@ID				get-all-posts
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Success		200	{array}		entity.Post
@@ -86,7 +86,7 @@ func (h *Handler) getAllPosts(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer				true	"post id"
@@ -135,7 +135,7 @@ func (h *Handler) updatePost(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"post id"
@@ -171,7 +171,7 @@ func (h *Handler) deletePost(c *gin.Context) {
 //	@Description	Get Comments of Post
 //	@ID				get-comments-post
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"post id"

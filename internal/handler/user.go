@@ -14,7 +14,7 @@ import (
 //	@Description	Create User
 //	@ID				create-user
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	body		entity.UserCreate	true	"user body"
@@ -50,7 +50,7 @@ func (h *Handler) createUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"user id"
@@ -83,7 +83,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Success		200	{object}	entity.User
@@ -114,7 +114,7 @@ func (h *Handler) getSelfUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer				true	"user id"
@@ -166,7 +166,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"user id"
@@ -207,7 +207,7 @@ func (h *Handler) deleteUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"user id"
@@ -249,7 +249,7 @@ func (h *Handler) getTasksByUserId(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"user id"

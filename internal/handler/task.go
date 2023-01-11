@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 	"todo-list/internal/entity"
 )
 
@@ -16,7 +17,7 @@ import (
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	body		entity.TaskCreate	true	"task body"
@@ -58,7 +59,7 @@ func (h *Handler) createTask(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"task id"
@@ -91,7 +92,7 @@ func (h *Handler) getTaskById(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer				true	"task id"
@@ -139,7 +140,7 @@ func (h *Handler) updateTask(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"task id"
@@ -165,4 +166,122 @@ func (h *Handler) deleteTask(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusNoContent, nil)
+}
+
+// Import Task
+//
+//	@Summary		Import Task
+//	@Tags			tasks
+//	@Description	Import Task
+//	@ID				import-task
+//
+//	@Security		ApiKeyAuth
+//
+// @Accept multipart/form-data
+//
+//	@Produce		json
+//	@Param			file formData file true "CSV file with tasks"
+//	@Success		204
+//	@Failure		400	{object}	errorResponse
+//	@Failure		401	{object}	errorResponse
+//	@Failure		403	{object}	errorResponse
+//	@Failure		404	{object}	errorResponse
+//	@Failure		500	{object}	errorResponse
+//	@Router			/api/tasks/import [post]
+func (h *Handler) importTasks(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+	file, err := c.FormFile("file")
+	if err != nil {
+		NewErrorResponse(c, -1, err.Error())
+		return
+	}
+	filename := strings.Join(strings.Split(file.Filename, " "), "_")
+	pathSave := "assets/" + filename
+	err = c.SaveUploadedFile(file, pathSave)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if !strings.Contains(filename, ".csv") {
+		NewErrorResponse(c, http.StatusBadRequest, "assets file has invalid type")
+		return
+	}
+	tasks, err := h.services.Task.ParseFile(pathSave)
+	if err != nil {
+		NewErrorResponse(c, -1, err.Error())
+		return
+	}
+	ids, err := h.services.Task.CreateBulk(userId, tasks)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	createdTasks, err := h.services.Task.GetByIds(ids)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, createdTasks)
+}
+
+// Import Task
+//
+//	@Summary		Import Task
+//	@Tags			tasks
+//	@Description	Import Task
+//	@ID				import-task
+//
+//	@Security		ApiKeyAuth
+//
+// @Accept multipart/form-data
+//
+//	@Produce		json
+//	@Param			file formData file true "CSV file with tasks"
+//	@Success		204
+//	@Failure		400	{object}	errorResponse
+//	@Failure		401	{object}	errorResponse
+//	@Failure		403	{object}	errorResponse
+//	@Failure		404	{object}	errorResponse
+//	@Failure		500	{object}	errorResponse
+//	@Router			/api/tasks/import [post]
+func (h *Handler) importTasks(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+	file, err := c.FormFile("file")
+	if err != nil {
+		NewErrorResponse(c, -1, err.Error())
+		return
+	}
+	filename := strings.Join(strings.Split(file.Filename, " "), "_")
+	pathSave := "assets/" + filename
+	err = c.SaveUploadedFile(file, pathSave)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if !strings.Contains(filename, ".csv") {
+		NewErrorResponse(c, http.StatusBadRequest, "assets file has invalid type")
+		return
+	}
+	tasks, err := h.services.Task.ParseFile(pathSave)
+	if err != nil {
+		NewErrorResponse(c, -1, err.Error())
+		return
+	}
+	ids, err := h.services.Task.CreateBulk(userId, tasks)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	createdTasks, err := h.services.Task.GetByIds(ids)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.JSON(http.StatusOK, createdTasks)
 }

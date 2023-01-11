@@ -9,6 +9,6 @@ RUN apt-get update && \
 COPY ./ ./
 
 RUN go mod download
-RUN go build -o app ./cmd/app/main.go
+RUN go build -o todo-list ./cmd/app/main.go
 
 ENV CGO_ENABLED 0

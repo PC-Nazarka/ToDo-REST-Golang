@@ -16,7 +16,7 @@ import (
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	body		entity.CommentCreate	true	"comment body"
@@ -57,7 +57,7 @@ func (h *Handler) createComment(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path		integer					true	"comment id"
@@ -105,7 +105,7 @@ func (h *Handler) updateComment(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// Accept json
+// @Accept json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"comment id"

@@ -16,7 +16,7 @@ import (
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	body		entity.CommentCreate	true	"comment body"
@@ -57,7 +57,7 @@ func (h *Handler) createComment(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer					true	"comment id"
@@ -68,13 +68,13 @@ func (h *Handler) createComment(c *gin.Context) {
 //	@Failure		403		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/comments/:id [patch]
+//	@Router			/api/comments/:commentId [patch]
 func (h *Handler) updateComment(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	commentId, err := strconv.Atoi(c.Param("id"))
+	commentId, err := strconv.Atoi(c.Param("commentId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -105,7 +105,7 @@ func (h *Handler) updateComment(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"comment id"
@@ -115,13 +115,13 @@ func (h *Handler) updateComment(c *gin.Context) {
 //	@Failure		403	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/api/comments/:id [delete]
+//	@Router			/api/comments/:commentId [delete]
 func (h *Handler) deleteComment(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	commentId, err := strconv.Atoi(c.Param("id"))
+	commentId, err := strconv.Atoi(c.Param("commentId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return

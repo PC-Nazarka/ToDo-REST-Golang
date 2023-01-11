@@ -24,6 +24,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Create Comment",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -79,6 +82,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Delete Comment",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -139,6 +145,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Update Comment Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -208,6 +217,9 @@ const docTemplate = `{
         "/api/posts": {
             "get": {
                 "description": "Get All Posts",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -253,6 +265,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Create Post",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -320,6 +335,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Delete Post",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -380,6 +398,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Update Post Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -449,6 +470,9 @@ const docTemplate = `{
         "/api/posts/:id/comments": {
             "get": {
                 "description": "Get Comments of Post",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -497,6 +521,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/refresh": {
+            "post": {
+                "description": "Refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Refresh",
+                "operationId": "refresh-tokens",
+                "parameters": [
+                    {
+                        "description": "refresh token",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.refreshTokens"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handler.signInOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/tasks": {
             "post": {
                 "security": [
@@ -505,6 +582,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Create task",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -566,6 +646,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get Task Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -623,6 +706,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Delete Task",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -683,6 +769,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Update Task Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -749,9 +838,130 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/tasks/export": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Export Task",
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Export Task",
+                "operationId": "Export-task",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tasks/import": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Import Task",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Import Task",
+                "operationId": "import-task",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "CSV file with tasks",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/token": {
             "post": {
                 "description": "Login in account",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -802,6 +1012,9 @@ const docTemplate = `{
         "/api/users": {
             "post": {
                 "description": "Create User",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -851,6 +1064,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get User Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -908,6 +1124,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Delete User",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -968,6 +1187,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Update User Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1042,6 +1264,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get Posts of User",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1110,6 +1335,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get Tasks of User",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1178,6 +1406,9 @@ const docTemplate = `{
                     }
                 ],
                 "description": "Get Self User Info",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1432,6 +1663,17 @@ const docTemplate = `{
                 }
             }
         },
+        "handler.refreshTokens": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "handler.signInInput": {
             "type": "object",
             "required": [
@@ -1450,10 +1692,14 @@ const docTemplate = `{
         "handler.signInOutput": {
             "type": "object",
             "required": [
-                "token"
+                "access",
+                "refresh"
             ],
             "properties": {
-                "token": {
+                "access": {
+                    "type": "string"
+                },
+                "refresh": {
                     "type": "string"
                 }
             }

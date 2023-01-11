@@ -19,7 +19,7 @@ import (
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	body		entity.TaskCreate	true	"task body"
@@ -61,7 +61,7 @@ func (h *Handler) createTask(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"task id"
@@ -70,9 +70,9 @@ func (h *Handler) createTask(c *gin.Context) {
 //	@Failure		401		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/tasks/:id [get]
+//	@Router			/api/tasks/:taskId [get]
 func (h *Handler) getTaskById(c *gin.Context) {
-	taskId, err := strconv.Atoi(c.Param("id"))
+	taskId, err := strconv.Atoi(c.Param("taskId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -94,7 +94,7 @@ func (h *Handler) getTaskById(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer				true	"task id"
@@ -105,13 +105,13 @@ func (h *Handler) getTaskById(c *gin.Context) {
 //	@Failure		403		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/tasks/:id [patch]
+//	@Router			/api/tasks/:taskId [patch]
 func (h *Handler) updateTask(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	taskId, err := strconv.Atoi(c.Param("id"))
+	taskId, err := strconv.Atoi(c.Param("taskId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -142,7 +142,7 @@ func (h *Handler) updateTask(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"task id"
@@ -152,13 +152,13 @@ func (h *Handler) updateTask(c *gin.Context) {
 //	@Failure		403	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/api/tasks/:id [delete]
+//	@Router			/api/tasks/:taskId [delete]
 func (h *Handler) deleteTask(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	taskId, err := strconv.Atoi(c.Param("id"))
+	taskId, err := strconv.Atoi(c.Param("taskId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -179,10 +179,10 @@ func (h *Handler) deleteTask(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept multipart/form-data
+//	@Accept			multipart/form-data
 //
 //	@Produce		json
-//	@Param			file formData file true "CSV file with tasks"
+//	@Param			file	formData	file	true	"CSV file with tasks"
 //	@Success		201
 //	@Failure		400	{object}	errorResponse
 //	@Failure		401	{object}	errorResponse
@@ -239,7 +239,7 @@ func (h *Handler) importTasks(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-//	@Produce		csv
+//	@Produce		text/csv
 //	@Success		200
 //	@Failure		400	{object}	errorResponse
 //	@Failure		401	{object}	errorResponse

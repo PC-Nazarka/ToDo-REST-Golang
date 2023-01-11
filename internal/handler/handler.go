@@ -42,19 +42,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		users := api.Group("/users")
 		{
 			users.POST("", h.createUser)
-			users.GET("/:id", h.userIdentity(), h.getUserById)
+			users.GET("/:userId", h.userIdentity(), h.getUserById)
 			users.GET("/me", h.userIdentity(), h.getSelfUser)
-			users.PATCH("/:id", h.userIdentity(), h.updateUser)
-			users.DELETE("/:id", h.userIdentity(), h.deleteUser)
-			users.GET("/:id/tasks", h.userIdentity(), h.getTasksByUserId)
-			users.GET("/:id/posts", h.userIdentity(), h.getPostsByUserId)
+			users.PATCH("/:userId", h.userIdentity(), h.updateUser)
+			users.DELETE("/:userId", h.userIdentity(), h.deleteUser)
+			users.GET("/:userId/tasks", h.userIdentity(), h.getTasksByUserId)
+			users.GET("/:userId/posts", h.userIdentity(), h.getPostsByUserId)
 		}
 		todo := api.Group("/tasks", h.userIdentity())
 		{
 			todo.POST("", h.createTask)
-			todo.GET("/:id", h.getTaskById)
-			todo.PATCH("/:id", h.updateTask)
-			todo.DELETE("/:id", h.deleteTask)
+			todo.GET("/:taskId", h.getTaskById)
+			todo.PATCH("/:taskId", h.updateTask)
+			todo.DELETE("/:taskId", h.deleteTask)
 			todo.POST("/import", h.importTasks)
 			todo.GET("/export", h.exportTasks)
 		}
@@ -62,16 +62,20 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			posts.POST("", h.userIdentity(), h.createPost)
 			posts.GET("", h.getAllPosts)
-			posts.GET("/:id/comments", h.getCommentsByPostId)
-			posts.PATCH("/:id", h.userIdentity(), h.updatePost)
-			posts.DELETE("/:id", h.userIdentity(), h.deletePost)
+			posts.GET("/:postId/comments", h.getCommentsByPostId)
+			posts.PATCH("/:postId", h.userIdentity(), h.updatePost)
+			posts.DELETE("/:postId", h.userIdentity(), h.deletePost)
 		}
 		comment := api.Group("/comments", h.userIdentity())
 		{
 			comment.POST("", h.createComment)
-			comment.PATCH("/:id", h.updateComment)
-			comment.DELETE("/:id", h.deleteComment)
+			comment.PATCH("/:commentId", h.updateComment)
+			comment.DELETE("/:commentId", h.deleteComment)
 		}
+	}
+	websockets := router.Group("/ws/chat", h.userIdentityWebSocket())
+	{
+		websockets.GET("", h.chat)
 	}
 	return router
 }

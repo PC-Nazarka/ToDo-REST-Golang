@@ -137,6 +137,13 @@ definitions:
       message:
         type: string
     type: object
+  handler.refreshTokens:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
   handler.signInInput:
     properties:
       password:
@@ -149,10 +156,13 @@ definitions:
     type: object
   handler.signInOutput:
     properties:
-      token:
+      access:
+        type: string
+      refresh:
         type: string
     required:
-    - token
+    - access
+    - refresh
     type: object
 host: localhost:8000
 info:
@@ -163,6 +173,8 @@ info:
 paths:
   /api/comments:
     post:
+      consumes:
+      - application/json
       description: Create Comment
       operationId: create-comment
       parameters:
@@ -198,6 +210,8 @@ paths:
       - comments
   /api/comments/:id:
     delete:
+      consumes:
+      - application/json
       description: Delete Comment
       operationId: delete-comment
       parameters:
@@ -237,6 +251,8 @@ paths:
       tags:
       - comments
     patch:
+      consumes:
+      - application/json
       description: Update Comment Info
       operationId: update-comment-info
       parameters:
@@ -285,6 +301,8 @@ paths:
       - comments
   /api/posts:
     get:
+      consumes:
+      - application/json
       description: Get All Posts
       operationId: get-all-posts
       produces:
@@ -312,6 +330,8 @@ paths:
       tags:
       - posts
     post:
+      consumes:
+      - application/json
       description: Create Post
       operationId: create-posts
       parameters:
@@ -355,6 +375,8 @@ paths:
       - posts
   /api/posts/:id:
     delete:
+      consumes:
+      - application/json
       description: Delete Post
       operationId: delete-post
       parameters:
@@ -394,6 +416,8 @@ paths:
       tags:
       - posts
     patch:
+      consumes:
+      - application/json
       description: Update Post Info
       operationId: update-post-info
       parameters:
@@ -442,6 +466,8 @@ paths:
       - posts
   /api/posts/:id/comments:
     get:
+      consumes:
+      - application/json
       description: Get Comments of Post
       operationId: get-comments-post
       parameters:
@@ -474,8 +500,45 @@ paths:
       summary: Get Comments of Post
       tags:
       - posts
+  /api/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh tokens
+      operationId: refresh-tokens
+      parameters:
+      - description: refresh token
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.refreshTokens'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.signInOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Refresh
+      tags:
+      - auth
   /api/tasks:
     post:
+      consumes:
+      - application/json
       description: Create task
       operationId: create-task
       parameters:
@@ -515,6 +578,8 @@ paths:
       - tasks
   /api/tasks/:id:
     delete:
+      consumes:
+      - application/json
       description: Delete Task
       operationId: delete-task
       parameters:
@@ -554,6 +619,8 @@ paths:
       tags:
       - tasks
     get:
+      consumes:
+      - application/json
       description: Get Task Info
       operationId: get-task-info
       parameters:
@@ -591,6 +658,8 @@ paths:
       tags:
       - tasks
     patch:
+      consumes:
+      - application/json
       description: Update Task Info
       operationId: update-task-info
       parameters:
@@ -637,8 +706,86 @@ paths:
       summary: Update Task Info
       tags:
       - tasks
+  /api/tasks/export:
+    get:
+      description: Export Task
+      operationId: Export-task
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Export Task
+      tags:
+      - tasks
+  /api/tasks/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Import Task
+      operationId: import-task
+      parameters:
+      - description: CSV file with tasks
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Import Task
+      tags:
+      - tasks
   /api/token:
     post:
+      consumes:
+      - application/json
       description: Login in account
       operationId: login-account
       parameters:
@@ -672,6 +819,8 @@ paths:
       - auth
   /api/users:
     post:
+      consumes:
+      - application/json
       description: Create User
       operationId: create-user
       parameters:
@@ -701,6 +850,8 @@ paths:
       - users
   /api/users/:id:
     delete:
+      consumes:
+      - application/json
       description: Delete User
       operationId: delete-user
       parameters:
@@ -740,6 +891,8 @@ paths:
       tags:
       - users
     get:
+      consumes:
+      - application/json
       description: Get User Info
       operationId: get-users-info
       parameters:
@@ -777,6 +930,8 @@ paths:
       tags:
       - users
     patch:
+      consumes:
+      - application/json
       description: Update User Info
       operationId: update-user-info
       parameters:
@@ -825,6 +980,8 @@ paths:
       - users
   /api/users/:id/posts:
     get:
+      consumes:
+      - application/json
       description: Get Posts of User
       operationId: get-posts-user
       parameters:
@@ -869,6 +1026,8 @@ paths:
       - users
   /api/users/:id/tasks:
     get:
+      consumes:
+      - application/json
       description: Get Tasks of User
       operationId: get-tasks-user
       parameters:
@@ -913,6 +1072,8 @@ paths:
       - users
   /api/users/me:
     get:
+      consumes:
+      - application/json
       description: Get Self User Info
       operationId: get-self-users-info
       produces:

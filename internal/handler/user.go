@@ -14,7 +14,7 @@ import (
 //	@Description	Create User
 //	@ID				create-user
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	body		entity.UserCreate	true	"user body"
@@ -50,7 +50,7 @@ func (h *Handler) createUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"user id"
@@ -59,9 +59,9 @@ func (h *Handler) createUser(c *gin.Context) {
 //	@Failure		401		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/users/:id [get]
+//	@Router			/api/users/:userId [get]
 func (h *Handler) getUserById(c *gin.Context) {
-	userId, err := strconv.Atoi(c.Param("id"))
+	userId, err := strconv.Atoi(c.Param("userId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -83,7 +83,7 @@ func (h *Handler) getUserById(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Success		200	{object}	entity.User
@@ -114,7 +114,7 @@ func (h *Handler) getSelfUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer				true	"user id"
@@ -125,13 +125,13 @@ func (h *Handler) getSelfUser(c *gin.Context) {
 //	@Failure		403		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/users/:id [patch]
+//	@Router			/api/users/:userId [patch]
 func (h *Handler) updateUser(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	userPathId, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("userId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -166,7 +166,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"user id"
@@ -176,13 +176,13 @@ func (h *Handler) updateUser(c *gin.Context) {
 //	@Failure		403	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/api/users/:id [delete]
+//	@Router			/api/users/:userId [delete]
 func (h *Handler) deleteUser(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	userPathId, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("userId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -207,7 +207,7 @@ func (h *Handler) deleteUser(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"user id"
@@ -217,9 +217,9 @@ func (h *Handler) deleteUser(c *gin.Context) {
 //	@Failure		403		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/users/:id/tasks [get]
+//	@Router			/api/users/:userId/tasks [get]
 func (h *Handler) getTasksByUserId(c *gin.Context) {
-	userPathId, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("userId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -249,7 +249,7 @@ func (h *Handler) getTasksByUserId(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"user id"
@@ -259,9 +259,9 @@ func (h *Handler) getTasksByUserId(c *gin.Context) {
 //	@Failure		403		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/users/:id/posts [get]
+//	@Router			/api/users/:userId/posts [get]
 func (h *Handler) getPostsByUserId(c *gin.Context) {
-	userPathId, err := strconv.Atoi(c.Param("id"))
+	userPathId, err := strconv.Atoi(c.Param("userId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return

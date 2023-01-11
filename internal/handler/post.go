@@ -16,7 +16,7 @@ import (
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	body		entity.PostCreate	true	"post body"
@@ -57,7 +57,7 @@ func (h *Handler) createPost(c *gin.Context) {
 //	@Description	Get All Posts
 //	@ID				get-all-posts
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Success		200	{array}		entity.Post
@@ -86,7 +86,7 @@ func (h *Handler) getAllPosts(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer				true	"post id"
@@ -97,13 +97,13 @@ func (h *Handler) getAllPosts(c *gin.Context) {
 //	@Failure		403		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/posts/:id [patch]
+//	@Router			/api/posts/:postId [patch]
 func (h *Handler) updatePost(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	postId, err := strconv.Atoi(c.Param("id"))
+	postId, err := strconv.Atoi(c.Param("postId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -135,7 +135,7 @@ func (h *Handler) updatePost(c *gin.Context) {
 //
 //	@Security		ApiKeyAuth
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path	integer	true	"post id"
@@ -145,13 +145,13 @@ func (h *Handler) updatePost(c *gin.Context) {
 //	@Failure		403	{object}	errorResponse
 //	@Failure		404	{object}	errorResponse
 //	@Failure		500	{object}	errorResponse
-//	@Router			/api/posts/:id [delete]
+//	@Router			/api/posts/:postId [delete]
 func (h *Handler) deletePost(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
-	postId, err := strconv.Atoi(c.Param("id"))
+	postId, err := strconv.Atoi(c.Param("postId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return
@@ -171,7 +171,7 @@ func (h *Handler) deletePost(c *gin.Context) {
 //	@Description	Get Comments of Post
 //	@ID				get-comments-post
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	path		integer	true	"post id"
@@ -179,9 +179,9 @@ func (h *Handler) deletePost(c *gin.Context) {
 //	@Failure		400		{object}	errorResponse
 //	@Failure		404		{object}	errorResponse
 //	@Failure		500		{object}	errorResponse
-//	@Router			/api/posts/:id/comments [get]
+//	@Router			/api/posts/:postId/comments [get]
 func (h *Handler) getCommentsByPostId(c *gin.Context) {
-	postId, err := strconv.Atoi(c.Param("id"))
+	postId, err := strconv.Atoi(c.Param("postId"))
 	if err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
 		return

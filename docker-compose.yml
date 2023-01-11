@@ -26,7 +26,6 @@ services:
       - DB_HOST=${POSTGRES_HOST}
       - DB_PORT=${POSTGRES_PORT}
       - DB_SSLMODE=${POSTGRES_SSLMODE}
-      - REDIS_URL=${REDIS_URL}
     command: go run cmd/app/main.go
 
   postgres:

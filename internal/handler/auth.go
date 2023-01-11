@@ -26,7 +26,7 @@ type refreshTokens struct {
 //	@Description	Login in account
 //	@ID				login-account
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	body		signInInput	true	"account login"
@@ -61,7 +61,7 @@ func (h *Handler) createToken(c *gin.Context) {
 //	@Description	Refresh tokens
 //	@ID				refresh-tokens
 //
-// @Accept json
+//	@Accept			json
 //
 //	@Produce		json
 //	@Param			input	body		refreshTokens	true	"refresh token"

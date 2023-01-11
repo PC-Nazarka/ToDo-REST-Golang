@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -10,6 +11,7 @@ import (
 const (
 	authorizationHeader = "Authorization"
 	userCtx             = "userId"
+	queryToken          = "token"
 )
 
 func (h *Handler) userIdentity() gin.HandlerFunc {
@@ -50,4 +52,26 @@ func getUserId(c *gin.Context) (int, error) {
 		return 0, errors.New("user id is of invalid type")
 	}
 	return idInt, nil
+}
+
+func (h *Handler) userIdentityWebSocket() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Query(queryToken)
+		fmt.Println(token)
+		if token == "" {
+			NewErrorResponse(c, http.StatusUnauthorized, "empty token from query")
+			return
+		}
+		userId, err := h.services.JWTAuthorization.ParseToken(token)
+		if err != nil {
+			NewErrorResponse(c, http.StatusUnauthorized, err.Error())
+			return
+		}
+		_, err = h.services.User.GetById(userId)
+		if err != nil {
+			NewErrorResponse(c, -1, err.Error())
+			return
+		}
+		c.Set(userCtx, userId)
+	}
 }

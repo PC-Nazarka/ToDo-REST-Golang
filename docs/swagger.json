@@ -67,7 +67,7 @@
                 }
             }
         },
-        "/api/comments/:id": {
+        "/api/comments/:commentId": {
             "delete": {
                 "security": [
                     {
@@ -320,7 +320,7 @@
                 }
             }
         },
-        "/api/posts/:id": {
+        "/api/posts/:postId": {
             "delete": {
                 "security": [
                     {
@@ -460,7 +460,7 @@
                 }
             }
         },
-        "/api/posts/:id/comments": {
+        "/api/posts/:postId/comments": {
             "get": {
                 "description": "Get Comments of Post",
                 "consumes": [
@@ -631,7 +631,7 @@
                 }
             }
         },
-        "/api/tasks/:id": {
+        "/api/tasks/:taskId": {
             "get": {
                 "security": [
                     {
@@ -1049,7 +1049,7 @@
                 }
             }
         },
-        "/api/users/:id": {
+        "/api/users/:userId": {
             "get": {
                 "security": [
                     {
@@ -1249,7 +1249,7 @@
                 }
             }
         },
-        "/api/users/:id/posts": {
+        "/api/users/:userId/posts": {
             "get": {
                 "security": [
                     {
@@ -1320,7 +1320,7 @@
                 }
             }
         },
-        "/api/users/:id/tasks": {
+        "/api/users/:userId/tasks": {
             "get": {
                 "security": [
                     {

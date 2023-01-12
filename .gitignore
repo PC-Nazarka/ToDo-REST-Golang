@@ -2,3 +2,5 @@
 .env
 assets/upload/*
 assets/download/*
+!assets/upload/.gitkeep
+!assets/download/.gitkeep

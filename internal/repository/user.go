@@ -53,6 +53,23 @@ func (u *UserRepository) GetById(id int) (entity.User, error) {
 	return user, nil
 }
 
+func (u *UserRepository) GetAll() ([]entity.User, error) {
+	var users []entity.User
+	query := fmt.Sprintf("SELECT * FROM %s;", userTable)
+	if err := u.db.Select(&users, query); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return users, errors.New("users not found")
+		default:
+			return users, errors.New(fmt.Sprintf("error: %s", err.Error()))
+		}
+	}
+	if users == nil {
+		users = make([]entity.User, 0)
+	}
+	return users, nil
+}
+
 func (u *UserRepository) Create(user entity.UserCreate) (int, error) {
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (username, first_name, last_name, email, password_hash) VALUES ($1, $2, $3, $4, $5) RETURNING id;", userTable)

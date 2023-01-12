@@ -52,6 +52,9 @@ func (c *CommentRepository) GetByPostId(id int) ([]entity.Comment, error) {
 			return comments, errors.New(fmt.Sprintf("error: %s", err.Error()))
 		}
 	}
+	if comments == nil {
+		comments = make([]entity.Comment, 0)
+	}
 	return comments, nil
 }
 

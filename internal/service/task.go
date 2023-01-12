@@ -106,6 +106,9 @@ func (t *TaskService) ParseFile(path string) ([]entity.TaskCreate, error) {
 		}
 		tasks = append(tasks, tempTask)
 	}
+	if tasks == nil {
+		tasks = make([]entity.TaskCreate, 0)
+	}
 	return tasks, nil
 }
 

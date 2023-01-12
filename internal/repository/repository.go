@@ -11,11 +11,13 @@ const (
 	taskTable    = "tasks"
 	postTable    = "posts"
 	commentTable = "comments"
+	roomTable    = "rooms"
 )
 
 type User interface {
 	GetByUsernameAndPassword(username, password string) (int, error)
 	GetById(id int) (entity.User, error)
+	GetAll() ([]entity.User, error)
 	Create(user entity.UserCreate) (int, error)
 	Update(id int, user entity.UserUpdate) error
 	Delete(id int) error
@@ -24,7 +26,6 @@ type User interface {
 type Task interface {
 	Create(userId int, task entity.TaskCreate) (int, error)
 	GetById(id int) (entity.Task, error)
-	GetByIds(ids []int) ([]entity.Task, error)
 	Update(id int, task entity.TaskUpdate) error
 	Delete(id int) error
 	GetByUserId(id int) ([]entity.Task, error)

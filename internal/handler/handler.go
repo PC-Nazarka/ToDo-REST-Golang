@@ -5,7 +5,6 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	_ "todo-list/docs"
-
 	"todo-list/internal/service"
 )
 
@@ -72,10 +71,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			comment.PATCH("/:commentId", h.updateComment)
 			comment.DELETE("/:commentId", h.deleteComment)
 		}
-	}
-	websockets := router.Group("/ws/chat", h.userIdentityWebSocket())
-	{
-		websockets.GET("", h.chat)
 	}
 	return router
 }

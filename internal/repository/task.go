@@ -42,11 +42,6 @@ func (t *TaskRepository) GetById(id int) (entity.Task, error) {
 	return task, nil
 }
 
-func (t *TaskRepository) GetByIds(ids []int) ([]entity.Task, error) {
-	var tasks = make([]entity.Task, 1)
-	return tasks, nil
-}
-
 func (t *TaskRepository) Update(id int, task entity.TaskUpdate) error {
 	setValues := make([]string, 0)
 	args := make([]interface{}, 0)
@@ -89,6 +84,9 @@ func (t *TaskRepository) GetByUserId(id int) ([]entity.Task, error) {
 		default:
 			return tasks, errors.New(fmt.Sprintf("error: %s", err.Error()))
 		}
+	}
+	if tasks == nil {
+		tasks = make([]entity.Task, 0)
 	}
 	return tasks, nil
 }

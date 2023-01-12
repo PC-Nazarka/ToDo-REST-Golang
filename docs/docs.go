@@ -74,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/comments/:id": {
+        "/api/comments/:commentId": {
             "delete": {
                 "security": [
                     {
@@ -327,7 +327,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/posts/:id": {
+        "/api/posts/:postId": {
             "delete": {
                 "security": [
                     {
@@ -467,7 +467,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/posts/:id/comments": {
+        "/api/posts/:postId/comments": {
             "get": {
                 "description": "Get Comments of Post",
                 "consumes": [
@@ -638,7 +638,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/tasks/:id": {
+        "/api/tasks/:taskId": {
             "get": {
                 "security": [
                     {
@@ -1056,7 +1056,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/users/:id": {
+        "/api/users/:userId": {
             "get": {
                 "security": [
                     {
@@ -1256,7 +1256,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/users/:id/posts": {
+        "/api/users/:userId/posts": {
             "get": {
                 "security": [
                     {
@@ -1327,7 +1327,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/users/:id/tasks": {
+        "/api/users/:userId/tasks": {
             "get": {
                 "security": [
                     {

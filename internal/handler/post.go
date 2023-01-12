@@ -71,9 +71,6 @@ func (h *Handler) getAllPosts(c *gin.Context) {
 		NewErrorResponse(c, -1, err.Error())
 		return
 	}
-	if posts == nil {
-		posts = make([]entity.Post, 0)
-	}
 	c.JSON(http.StatusOK, posts)
 }
 
@@ -190,9 +187,6 @@ func (h *Handler) getCommentsByPostId(c *gin.Context) {
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
-	}
-	if comments == nil {
-		comments = make([]entity.Comment, 0)
 	}
 	c.JSON(http.StatusOK, comments)
 }

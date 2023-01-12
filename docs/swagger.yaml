@@ -208,7 +208,7 @@ paths:
       summary: Create Comment
       tags:
       - comments
-  /api/comments/:id:
+  /api/comments/:commentId:
     delete:
       consumes:
       - application/json
@@ -373,7 +373,7 @@ paths:
       summary: Create Post
       tags:
       - posts
-  /api/posts/:id:
+  /api/posts/:postId:
     delete:
       consumes:
       - application/json
@@ -464,7 +464,7 @@ paths:
       summary: Update Post Info
       tags:
       - posts
-  /api/posts/:id/comments:
+  /api/posts/:postId/comments:
     get:
       consumes:
       - application/json
@@ -576,7 +576,7 @@ paths:
       summary: Create Task
       tags:
       - tasks
-  /api/tasks/:id:
+  /api/tasks/:taskId:
     delete:
       consumes:
       - application/json
@@ -848,7 +848,7 @@ paths:
       summary: Create User
       tags:
       - users
-  /api/users/:id:
+  /api/users/:userId:
     delete:
       consumes:
       - application/json
@@ -978,7 +978,7 @@ paths:
       summary: Update User Info
       tags:
       - users
-  /api/users/:id/posts:
+  /api/users/:userId/posts:
     get:
       consumes:
       - application/json
@@ -1024,7 +1024,7 @@ paths:
       summary: Get Posts of User
       tags:
       - users
-  /api/users/:id/tasks:
+  /api/users/:userId/tasks:
     get:
       consumes:
       - application/json

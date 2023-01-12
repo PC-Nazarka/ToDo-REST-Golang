@@ -52,6 +52,9 @@ func (p *PostRepository) GetAll() ([]entity.Post, error) {
 			return posts, errors.New(fmt.Sprintf("error: %s", err.Error()))
 		}
 	}
+	if posts == nil {
+		posts = make([]entity.Post, 0)
+	}
 	return posts, nil
 }
 
@@ -82,6 +85,9 @@ func (p *PostRepository) GetByUserId(id int) ([]entity.Post, error) {
 	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id=$1 ORDER BY created_at DESC;", postTable)
 	if err := p.db.Select(&posts, query, id); err != nil {
 		return posts, err
+	}
+	if posts == nil {
+		posts = make([]entity.Post, 0)
 	}
 	return posts, nil
 }

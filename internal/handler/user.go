@@ -234,9 +234,6 @@ func (h *Handler) getTasksByUserId(c *gin.Context) {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	if tasks == nil {
-		tasks = make([]entity.Task, 0)
-	}
 	c.JSON(http.StatusOK, tasks)
 }
 
@@ -275,9 +272,6 @@ func (h *Handler) getPostsByUserId(c *gin.Context) {
 	if err != nil {
 		NewErrorResponse(c, -1, err.Error())
 		return
-	}
-	if posts == nil {
-		posts = make([]entity.Post, 0)
 	}
 	c.JSON(http.StatusOK, posts)
 }
